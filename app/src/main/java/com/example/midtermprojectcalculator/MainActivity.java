@@ -60,20 +60,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String buttonText = button.getText().toString();
         String dataToCalculate = solutionTv.getText().toString();
 
+        //clear the display and reset the result to 0 by clicking ac button
         while (buttonText.equals("AC")) {
             solutionTv.setText("");
             resultTv.setText("0");
             return;
         }
+        //for the buttons ( and )
         if (buttonText.equals("(")) {
             dataToCalculate = dataToCalculate + buttonText;
         } else if (buttonText.equals(")")) {
             if (dataToCalculate.contains("(") && !dataToCalculate.endsWith("(")) {
                 dataToCalculate = dataToCalculate + buttonText;
             }
+
+            //to get the result by clicking = button
         } else if (buttonText.equals("=")) {
             solutionTv.setText(resultTv.getText());
             return;
+            //to remove digit number when clicking the c button
         } else if (buttonText.equals("C")) {
             if (dataToCalculate.length() == 0 || dataToCalculate.equals("0")) {
                 solutionTv.setText("");
@@ -81,10 +86,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
             dataToCalculate = dataToCalculate.substring(0, dataToCalculate.length() - 1);
-        } else {
+        }
+
+        else {
             dataToCalculate = dataToCalculate + buttonText;
         }
         solutionTv.setText(dataToCalculate);
+
+        //for the org.mozilla error
 
         if (dataToCalculate.length() > 0) {
             String finalResult = getResult(dataToCalculate);
@@ -95,7 +104,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-        String getResult(String data) {
+
+    //to calculate numbers based on the buttons
+    String getResult(String data) {
         try {
             Context context = Context.enter();
             context.setOptimizationLevel(-1);
