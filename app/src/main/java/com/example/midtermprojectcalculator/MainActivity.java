@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+
 
 import com.google.android.material.button.MaterialButton;
 
@@ -55,6 +58,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         MaterialButton button = (MaterialButton) v;
         String buttonText = button.getText().toString();
-        solutionTv.setText(buttonText);
+        String dataToCalculate = solutionTv.getText().toString();
+
+        while (buttonText.equals("AC")) {
+            solutionTv.setText("");
+            resultTv.setText("0");
+            return;
+        }
+        if (buttonText.equals("(")) {
+            dataToCalculate = dataToCalculate + buttonText;
+        } else if (buttonText.equals(")")) {
+            if (dataToCalculate.contains("(") && !dataToCalculate.endsWith("(")) {
+                dataToCalculate = dataToCalculate + buttonText;
+            }
+        } else if (buttonText.equals("=")) {
+            solutionTv.setText(resultTv.getText());
+            return;
+        } else if (buttonText.equals("C")) {
+            if (dataToCalculate.length() == 0 || dataToCalculate.equals("0")) {
+                solutionTv.setText("");
+                resultTv.setText("0");
+                return;
+            }
+            dataToCalculate = dataToCalculate.substring(0, dataToCalculate.length() - 1);
+        } else {
+            dataToCalculate = dataToCalculate + buttonText;
+        }
+        solutionTv.setText(dataToCalculate);
+
+        if (dataToCalculate.length() > 0) {
+            String finalResult = getResult(dataToCalculate);
+
+            if (!finalResult.equals("Err")) {
+                resultTv.setText(finalResult);
+            }
+        }
+
     }
+        String getResult(String data) {
+        try {
+            Context context = Context.enter();
+            context.setOptimizationLevel(-1);
+            Scriptable scriptable = context.initSafeStandardObjects();
+            String finalResult = context.evaluateString(scriptable, data, "Javascript", 1, null).toString();
+            if(finalResult.endsWith(".0"))
+            {
+                finalResult = finalResult.replace(".0", "");
+            }
+            return finalResult;
+
+
+
+        }catch (Exception e)
+        {
+            return "Err";
+        }
+
+
+    }
+
+
+
+
+
+
 }
